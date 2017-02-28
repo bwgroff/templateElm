@@ -1,3 +1,9 @@
+"""
+Creates simplest Elm app containing individual listed components.
+If you want the components to interact, just modify `update`.
+As far as making it look nice, you're on your own.
+"""
+
 from jinja2 import Template, environment
 
 
