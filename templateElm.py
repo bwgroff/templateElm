@@ -1,7 +1,7 @@
 from jinja2 import Template, environment
 
 
-def elmTime(modules, template):
+def makeItSo(modules, template):
     t = Template(template)
     return t.render(modules=modules)
 
@@ -86,4 +86,4 @@ if __name__ == "__main__":
     import sys
     modules = sys.argv[1:]
     assert len(modules) == len(set(modules)), "Modules list contains repetition"
-    print(elmTime(modules, TEMPLATE))
+    print(makeItSo(modules, TEMPLATE))
