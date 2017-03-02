@@ -14,8 +14,10 @@ def makeItSo(modules, template):
 
 TEMPLATE = """import Tuple as T
 import Html exposing (program, div, text, Html)
+
 {% for module in modules %}import {{module}}
 {% endfor %}
+
 main =
   Html.program
     { init = init
@@ -23,15 +25,22 @@ main =
     , view = view
     , update = update
   }
+
+
 -- MODEL
+
 type alias Model =
   { {{modules[0] | lower}} : {{modules[0]}}.Model{% for module in modules[1:] %}
   , {{module | lower}} : {{module}}.Model{% endfor %}
   }
+
+
 -- UPDATE
+
 type Msg
   = {{modules[0]}}Msg {{modules[0]}}.Msg{% for module in modules[1:]%}
   | {{module}}Msg {{module}}.Msg{% endfor %}
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
@@ -42,8 +51,11 @@ update msg model =
         newSubModel = T.first componentUpdate
         newCmd = Cmd.map {{module}}Msg (T.second componentUpdate)
       in
-        ({ model | {{module | lower}} = newSubModel }, newCmdModel )
+        ({ model | {{module | lower}} = newSubModel }, newCmd )
 {%endfor%}
+
+-- INIT
+
 init : (Model, Cmd Msg)
 init =
   let
@@ -59,13 +71,20 @@ init =
       , {{module | lower}}Cmd{% endfor %}
       ]
     )
+
+
+-- SUBSCRIPTIONS
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
     [ Sub.map {{modules[0]}}Msg ({{modules[0]}}.subscriptions model.{{modules[0] | lower}}){% for module in modules[1:] %}
     , Sub.map {{module}}Msg ({{module}}.subscriptions model.{{module | lower}}){% endfor %}
     ]
+
+
 -- VIEW
+
 view : Model -> Html Msg
 view model =
   div []
